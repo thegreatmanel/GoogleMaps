@@ -1,6 +1,7 @@
 package manel.googlemaps;
 
 import android.*;
+import android.Manifest;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
@@ -31,6 +32,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private final LatLng MARCA = new LatLng(42.237023, -8.717944);
     private final LatLng CENTRO = new LatLng(42.237558, -8.717285);
     private static final int LOCATION_REQUEST_CODE = 1;
+    private static final int CAMERA_REQUEST_CODE = 2;
     private Location mLastLocation;
 
     @Override
@@ -52,6 +54,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     .addOnConnectionFailedListener(this)
                     .addApi(LocationServices.API)
                     .build();
+        }
+
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    android.Manifest.permission.CAMERA)) {
+                // Mostrar diálogo explicativo
+            } else {
+                // Solicitar permiso
+                ActivityCompat.requestPermissions(
+                        this,
+                        new String[]{Manifest.permission.CAMERA},
+                        CAMERA_REQUEST_CODE);
+            }
         }
 
         mapFragment.getMapAsync(this);
@@ -87,6 +104,51 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         }
         mMap.getUiSettings().setZoomControlsEnabled(true);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        if (requestCode == LOCATION_REQUEST_CODE) {
+            // ¿Permisos asignados?
+            if (permissions.length > 0 &&
+                    permissions[0].equals(android.Manifest.permission.ACCESS_FINE_LOCATION) &&
+                    grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    return;
+                }
+                mMap.setMyLocationEnabled(true);
+            } else {
+                Toast.makeText(this, "Error de permisos", Toast.LENGTH_LONG).show();
+            }
+
+        }else if(requestCode == CAMERA_REQUEST_CODE){
+            if (permissions.length > 0 &&
+                    permissions[0].equals(Manifest.permission.CAMERA) &&
+                    grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    return;
+                }
+            } else {
+                Toast.makeText(this, "Error de permisos", Toast.LENGTH_LONG).show();
+            }
+        }
     }
 
     @Override
