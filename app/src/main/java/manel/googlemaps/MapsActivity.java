@@ -2,6 +2,7 @@ package manel.googlemaps;
 
 import android.*;
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
@@ -24,7 +25,7 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, GoogleMap.OnMapClickListener {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, GoogleMap.OnMapClickListener, GoogleMap.OnMapLongClickListener {
 
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
@@ -33,6 +34,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private final LatLng CENTRO = new LatLng(42.237558, -8.717285);
     private static final int LOCATION_REQUEST_CODE = 1;
     private static final int CAMERA_REQUEST_CODE = 2;
+    private static final int PREMIO_REQUEST_CODE = 4545;
     private Location mLastLocation;
 
     @Override
@@ -78,6 +80,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setOnMapClickListener(this);
+        mMap.setOnMapLongClickListener(this);
         CircleOptions area = new CircleOptions()
                 .center(CENTRO)
                 .radius(100)
@@ -209,5 +212,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mMap.addCircle(circuloMarca).setVisible(true);
 
         }
+    }
+
+    @Override
+    public void onMapLongClick(LatLng latLng) {
+        Intent intent = new Intent(getBaseContext(), ScannerActivity.class);
+        startActivityForResult(intent, PREMIO_REQUEST_CODE);
     }
 }
