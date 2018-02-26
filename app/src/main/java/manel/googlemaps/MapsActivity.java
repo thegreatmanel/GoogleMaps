@@ -1,5 +1,7 @@
 package manel.googlemaps;
 
+import android.graphics.Color;
+import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
@@ -12,6 +14,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -19,6 +22,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
+    Location marcaUbicacion =new Location("mi marca");
+    private final LatLng MARCA = new LatLng(42.237023, -8.717944);
+    private final LatLng CENTRO = new LatLng(42.237558, -8.717285);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,10 +50,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        CircleOptions area = new CircleOptions()
+                .center(CENTRO)
+                .radius(100)
+                .strokeColor(Color.parseColor("#FF4000"))
+                .strokeWidth(4)
+                .fillColor(Color.argb(32, 33, 150, 243));
+
+        mMap.addCircle(area).setVisible(true);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(CENTRO, 17));
     }
 
     @Override
